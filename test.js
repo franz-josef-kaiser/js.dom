@@ -415,6 +415,25 @@ describe('score.dom', function() {
             });
         });
 
+        it("should loop score.dom child objects", function(done) {
+            loadScore(['dom'], function(score) {
+                try {
+                    var div = score.dom.fromString('<div class="foo-0"><div class="foo-0-1"></div></div><div class="foo-1"></div>');
+                    expect(div.length).to.be(2);
+                    div.forEach(function(node, index) {
+                        node.forEach(function(childNode, childIndex) {
+                            expect(childIndex).to.not.eql(index);
+                            expect(childNode).to.be(score.dom(childNode));
+                            expect(childNode.attr('class')).to.be('foo-' + index + '-' + childIndex);
+                        });
+                    });
+                    done();
+                } catch (e) {
+                    done(e);
+                }
+            });
+        });
+
     });
 
     describe('#prepend', function() {
